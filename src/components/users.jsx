@@ -1,9 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
+import { paginate } from "../api/utils/paginate";
+import Pagination from "./pagination";
 import User from "./user";
 const Users = ({ users, ...rest }) => {
+    const count = users.length
+    const pageSize = 4
+    const [currentPage, setCurrentPage] = useState(1)
+    const handlePageChange = (pageIndex) => {
+        /*console.log('pageIndex', pageIndex)*/
+        setCurrentPage(pageIndex)
+    }
+    
+    const userCrop = paginate(users, currentPage, pageSize)
     return (
         <>
-            {users.length > 0 && (
+            {count > 0 && (
                 <table className="table">
                     <thead>
                         <tr>
@@ -17,12 +28,13 @@ const Users = ({ users, ...rest }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {users.map((user) => (
-                            <User {...rest} {...user} />
+                        {userCrop.map((user) => (
+                            <User {...rest} {...user} key = {user._id} />
                         ))}
                     </tbody>
                 </table>
             )}
+            <Pagination itemCount={count} pageSize = {pageSize} currentPage = {currentPage} onPageChange = {handlePageChange}/>
         </>
     );
 };
